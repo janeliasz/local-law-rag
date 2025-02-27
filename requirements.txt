@@ -1,0 +1,9 @@
+black==25.1.0
+dvc==3.59.1
+numpy==2.1.3
+datasets==3.1.0
+pdfplumber==0.11.5
+tqdm==4.67.0
+sentence-transformers==3.3.1
+streamlit==1.42.2
+faiss-cpu==1.9.0.post1

@@ -1,8 +1,8 @@
-device: "mps"
+device: "cuda"
 
 scrap:
   year: 2024
-  page_size: 10
+  page_size: 200
 
 create_embeddings:
   biencoder: "sentence-transformers/multi-qa-mpnet-base-dot-v1"

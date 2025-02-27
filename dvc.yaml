@@ -22,6 +22,5 @@ stages:
     - outputs/dataset/
     params:
     - create_embeddings.biencoder
-    - device
     outs:
     - outputs/embeddings.pkl

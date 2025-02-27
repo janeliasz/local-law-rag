@@ -1,12 +1,16 @@
 import streamlit as st
 import os
 import requests
+import yaml
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
 from rag import get_faiss_dataset, retrieve, rerank
 
 
-DEVICE = "mps"
+with open("params.yaml", "r") as f:
+    params = yaml.safe_load(f)
+    DEVICE = params["device"]
+
 RETRIEVER_TOP_K = 50
 RERANKER_TOP_K = 10
 
