@@ -1,0 +1,8 @@
+device: "mps"
+
+scrap:
+  year: 2024
+  page_size: 10
+
+create_embeddings:
+  biencoder: "sentence-transformers/multi-qa-mpnet-base-dot-v1"

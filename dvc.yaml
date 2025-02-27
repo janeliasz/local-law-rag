@@ -1,0 +1,27 @@
+stages:
+  scrap:
+    cmd: python scripts/scrap.py
+    deps:
+    - scripts/scrap.py
+    params:
+    - scrap.page_size
+    - scrap.year
+    outs:
+    - outputs/scraped/
+  create_dataset:
+    cmd: python scripts/create_dataset.py
+    deps:
+    - scripts/create_dataset.py
+    - outputs/scraped/
+    outs:
+    - outputs/dataset/
+  create_embeddings:
+    cmd: python scripts/create_embeddings.py
+    deps:
+    - scripts/create_embeddings.py
+    - outputs/dataset/
+    params:
+    - create_embeddings.biencoder
+    - device
+    outs:
+    - outputs/embeddings.pkl

@@ -1,8 +1,11 @@
 import os
-import argparse
 import pdfplumber
 from datasets import Dataset, concatenate_datasets
 from tqdm import tqdm
+
+
+INPUT_DIR = "outputs/scraped"
+OUTPUT_DIR = "outputs/dataset"
 
 
 def extract_text_from_pdf(pdf_path):
@@ -12,21 +15,6 @@ def extract_text_from_pdf(pdf_path):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input_dir", type=str, help="Directory with PDFs", default="outputs/scraped"
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        help="Output directory for dataset",
-        default="outputs/dataset",
-    )
-
-    args = parser.parse_args()
-    INPUT_DIR = args.input_dir
-    OUTPUT_DIR = args.output_dir
-
     if os.path.exists(OUTPUT_DIR):
         dataset = Dataset.load_from_disk(OUTPUT_DIR)
         existing_files = set(dataset["file_name"])

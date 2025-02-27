@@ -1,7 +1,15 @@
 import os
-import argparse
+import yaml
 from tqdm import tqdm
 import requests
+
+
+OUTPUT_DIR = "outputs/scraped"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+with open("params.yaml", "r") as f:
+    params = yaml.safe_load(f)
+    params = params["scrap"]
 
 
 def get_documents_ids():
@@ -12,7 +20,12 @@ def get_documents_ids():
         "Content-Type": "application/json",
     }
 
-    payload = {"InstitutionId": 548, "AdditionalId": 2024, "SearchForType": 14}
+    payload = {
+        "InstitutionId": 548,
+        "SearchForType": 14,
+        "AdditionalId": params["year"],
+        "PageSize": params["page_size"],
+    }
 
     # payload = {
     #     "PageNumber": 0,
@@ -77,14 +90,6 @@ def download_document_files(files, output_dir):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--output_dir", type=str, help="Output directory", default="outputs/scraped"
-    )
-
-    args = parser.parse_args()
-    OUTPUT_DIR = args.output_dir
-
     document_ids = get_documents_ids()
 
     for document_id in tqdm(document_ids):

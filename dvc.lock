@@ -1,0 +1,58 @@
+schema: '2.0'
+stages:
+  scrap:
+    cmd: python scripts/scrap.py
+    deps:
+    - path: scripts/scrap.py
+      hash: md5
+      md5: f9d498663bd46d1bf0c2d94befc308b2
+      size: 2600
+    params:
+      params.yaml:
+        scrap.page_size: 10
+        scrap.year: 2024
+    outs:
+    - path: outputs/scraped/
+      hash: md5
+      md5: b703f86745b301b218b8f6e4cf24941f.dir
+      size: 4814176
+      nfiles: 10
+  create_dataset:
+    cmd: python scripts/create_dataset.py
+    deps:
+    - path: outputs/scraped/
+      hash: md5
+      md5: b703f86745b301b218b8f6e4cf24941f.dir
+      size: 4814176
+      nfiles: 10
+    - path: scripts/create_dataset.py
+      hash: md5
+      md5: fce93f1bb61dbb887fe943868aea8b28
+      size: 1137
+    outs:
+    - path: outputs/dataset/
+      hash: md5
+      md5: ff206f59728a390ca40c75aa1f609bf1.dir
+      size: 80622
+      nfiles: 3
+  create_embeddings:
+    cmd: python scripts/create_embeddings.py
+    deps:
+    - path: outputs/dataset/
+      hash: md5
+      md5: ff206f59728a390ca40c75aa1f609bf1.dir
+      size: 80622
+      nfiles: 3
+    - path: scripts/create_embeddings.py
+      hash: md5
+      md5: 005543c80da76e3c2fd71565afcdfa63
+      size: 1650
+    params:
+      params.yaml:
+        create_embeddings.biencoder: sentence-transformers/multi-qa-mpnet-base-dot-v1
+        device: mps
+    outs:
+    - path: outputs/embeddings.pkl
+      hash: md5
+      md5: 796fa781c20a63bd718466cb71260831
+      size: 31322

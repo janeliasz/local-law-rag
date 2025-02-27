@@ -1,31 +1,21 @@
 import os
-import argparse
+import yaml
 import pickle
 from datasets import load_from_disk
 from sentence_transformers import SentenceTransformer
 
 
+DATASET_DIR = "outputs/dataset"
+OUTPUT_PATH = "outputs/embeddings.pkl"
+
+with open("params.yaml", "r") as f:
+    params = yaml.safe_load(f)
+    DEVICE = params["device"]
+    params = params["create_embeddings"]
+
+
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--dataset_dir",
-        type=str,
-        help="Directory with dataset",
-        default="outputs/dataset",
-    )
-    parser.add_argument(
-        "--output_path",
-        type=str,
-        help="Output path for embeddings",
-        default="outputs/embeddings.pkl",
-    )
-    parser.add_argument("--device", type=str, default="mps")
-
-    args = parser.parse_args()
-    DATASET_DIR = args.dataset_dir
-    OUTPUT_PATH = args.output_path
-    DEVICE = args.device
-
+    initial_files = set(os.listdir(DATASET_DIR))
     dataset = load_from_disk(DATASET_DIR)
 
     if os.path.exists(OUTPUT_PATH):
@@ -34,7 +24,7 @@ def main():
     else:
         embeddings = {}
 
-    model = SentenceTransformer("sentence-transformers/multi-qa-mpnet-base-dot-v1")
+    model = SentenceTransformer(params["biencoder"])
     model.to(DEVICE)
 
     filtered_dataset = dataset.filter(lambda row: row["file_name"] not in embeddings)
@@ -56,6 +46,14 @@ def main():
 
     with open(OUTPUT_PATH, "wb") as f:
         pickle.dump(embeddings, f)
+
+    # for some reason load_from_disk() creates a cache file in outputs/dataset and dvc gets lost
+    final_files = set(os.listdir(DATASET_DIR))
+    new_files = final_files - initial_files
+    for file in new_files:
+        file_path = os.path.join(DATASET_DIR, file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
 
 if __name__ == "__main__":
